@@ -10,8 +10,8 @@ function App() {
       <BrowserRouter>
         <Navbar></Navbar>
         <Switch>
-          <Route exact path="/" element={Home}></Route>
-          <Route exact path="/users/:userId" element={User}></Route>
+          <Route exact path="/" component={Home}></Route>
+          <Route exact path="/users/:userId" component={User}></Route>
         </Switch>
       </BrowserRouter>
     </div>
