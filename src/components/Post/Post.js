@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import Card from '@material-ui/core/Card';
@@ -14,11 +14,14 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 import CommentIcon from '@material-ui/icons/Comment';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { Link } from "react-router-dom";
+import { Container } from "@material-ui/core";
+import Comment from "../Comment/Comment";
 
 const useStyles = makeStyles((theme) => ({
     root: {
         width: 800,
         textAlign: "left",
+        margin: 20
     },
     media: {
         height: 0,
@@ -32,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
         }),
     },
     avatar: {
-        backgroundColor: red[500],
+        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
     },
     link: {
         textDecoration: "none",
@@ -42,19 +45,47 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Post(props) {
-    const { title, text, userId, userName } = props;
+    const { title, text, userId, userName, postId } = props;
     const classes = useStyles();
     const [expanded, setExpanded] = useState(false);
     const [liked, setLiked] = useState(false);
+    const [error, setError] = useState(null);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [commentList, setCommentList] = useState([]);
+    const isInitialMount = useRef(true);
 
     const handleExpandClick = () => {
         setExpanded(!expanded);
+        refreshComments();
+        console.log(commentList)
     };
 
     const handleLike = () => {
         setLiked(!liked)
-
     }
+
+    const refreshComments = () => {
+        fetch("/comments?postId="+postId)
+        .then(res => res.json()) //gelen responsu parse et
+        .then(
+            (result) => {
+                setIsLoaded(true);
+                setCommentList(result);
+            },
+            (error) => {
+                console.log(error)
+                setIsLoaded(true);
+                setError(error);
+            }
+        )   
+    }
+
+    useEffect(() => {
+        if(isInitialMount.current)
+            isInitialMount.current = false;
+        else
+            refreshComments();
+    }, [commentList])
 
     return (
         <Card className={classes.root}>
@@ -77,7 +108,7 @@ function Post(props) {
                 <IconButton
                 onClick={handleLike}
                 aria-label="add to favorites">
-                    <FavoriteIcon style={liked? { color: "purple" } : null} />
+                    <FavoriteIcon style={liked? { color: "yellow" } : null} />
                 </IconButton>
                 <IconButton
                     className={clsx(classes.expand, {
@@ -91,9 +122,12 @@ function Post(props) {
                 </IconButton>
             </CardActions>
             <Collapse in={expanded} timeout="auto" unmountOnExit>
-                <CardContent>
-
-                </CardContent>
+                <Container fixed className = {classes.container}>
+                {error? "error" :
+                isLoaded? commentList.map(comment => (
+                    <Comment userId = {1} userName = {"USER"} text = {comment.text}></Comment>
+                )) : "Loading"}
+                </Container>
             </Collapse>
         </Card>
     )
