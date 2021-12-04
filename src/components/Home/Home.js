@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme) => ({
         flexWrap: "wrap",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#00ff0d",
+        backgroundColor: "#d904c0",
         
     }
 }));
@@ -52,7 +52,7 @@ function Home() {
             <div className = {classes.container}>
                 <PostForm userId={1} userName={"ddd"} refreshPosts = {refreshPosts}/>
                 {postList.map(post => (
-                    <Post postId={post.id} userId={post.userId} userName={post.userName} 
+                    <Post likes={post.postLikes} postId={post.id} userId={post.userId} userName={post.userName} 
                     title={post.title} text={post.text}></Post> 
                 ))}
             </div> 

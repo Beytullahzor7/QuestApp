@@ -36,7 +36,7 @@ function Comment(props) {
         inputProps={{ maxLength: 25 }}
         fullWidth   
         value = {text}
-        startDorment = {
+        startAdornment = {
             <InputAdornment position="start">
                 <Link className={classes.link} to={{ pathname: '/users/' + userId}}>
                     <Avatar aria-label="recipe" className={classes.small}>
