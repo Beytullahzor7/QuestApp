@@ -34,7 +34,7 @@ function Comment(props) {
         id="outlined-adornment-amount"
         multiline
         inputProps={{ maxLength: 25 }}
-        fullWidth   
+        fullWidth       
         value = {text}
         startAdornment = {
             <InputAdornment position="start">

@@ -13,9 +13,11 @@ import { light } from "@material-ui/core/styles/createPalette";
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
+        
     },
     menuButton: {
         marginRight: theme.spacing(2),
+        
 
     },
     title: {
@@ -26,6 +28,7 @@ const useStyles = makeStyles((theme) => ({
         textDecoration: "none",
         boxShadow: "none",
         color: "white"
+        
     }
 }));
 

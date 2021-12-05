@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
 function PostForm(props) {
     const { userId, userName, refreshPosts } = props;
     const classes = useStyles();
-    const [text, setText] = useState("");
+    const [text, setText] = useState(""); //Text ve Title başlangıç stateleri boş bir string olacak
     const [title, setTitle] = useState("");
     const [isSent, setIsSent] = useState(false);
 
