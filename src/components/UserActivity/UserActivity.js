@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, forwardRef } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -8,6 +8,20 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import { Button } from "@material-ui/core";
+import Dialog from '@material-ui/core/Dialog';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItem from '@material-ui/core/ListItem';
+import List from '@material-ui/core/List';
+import Divider from '@material-ui/core/Divider';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
+import Slide from '@material-ui/core/Slide';
+import Post from "../Post/Post";
+
 
 const columns = [
   {
@@ -26,16 +40,92 @@ const columns = [
     container: {
       maxHeight: 440,
     },
+    appBar: {
+      position: 'relative',
+    },
+    title: {
+      marginLeft: 2,
+      flex: 1,
+    },
   });
+
+  const Transition = forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+  });
+
+  function PopUp(props) {
+    const classes = useStyles();
+    const {isOpen, postId, setIsOpen} = props;
+    const [open, setOpen] = useState(isOpen);
+    const [post, setPost] = useState();
+
+    const getPost = () => {
+      fetch("/posts/"+postId, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": localStorage.getItem("tokenKey"),
+        },
+      })
+      .then(res => res.json())
+      .then(
+        (result) => {
+          console.log(result);
+          setPost(result);
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+    }
+  
+    const handleClose = () => {
+      setOpen(false);
+      setIsOpen(false);
+    };
+
+    useEffect(() => {
+      setOpen(isOpen);
+    }, [isOpen]);
+
+    useEffect(() => {
+      getPost();
+    }, [postId])
+
+    return (
+      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton edge="start" color="inherit" onClick={handleClose} aria-label="close">
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Close
+            </Typography>
+          </Toolbar>
+        </AppBar>
+        {post? <Post likes = {post.postLikes} postId = {post.id} userId = {post.userId} userName = {post.userName}
+                  title = {post.title} text = {post.text}></Post>: "loading"}
+      </Dialog>
+    )
+ } 
 
 function UserActivity(props) {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [rows, setRows] = useState([]);
     const {userId} = props;
+    const classes = useStyles();
+    const [isOpen, setIsOpen] =useState();
+    const [selectedPost, setSelectedPost] = useState();
+
+    const handleNotification = (postId) => {
+      setSelectedPost(postId);
+      setIsOpen(true);
+    };
 
     const getActivity = () => {
-        fetch("/users/activity/"+userId, {
+        fetch("/users/activity/"+1, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -46,6 +136,7 @@ function UserActivity(props) {
         .then(
             (result) => {
                 setIsLoaded(true);
+                console.log(result);
                 setRows(result);
             },
             (error) => {
@@ -60,64 +151,33 @@ function UserActivity(props) {
         getActivity()
     }, [])
 
-    const classes = useStyles();
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPage] = useState(10);
-
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-  
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPage(+event.target.value);
-        setPage(0);
-    };
 
     return (
+        <div>
+        {isOpen? <PopUp isOpen={isOpen} postId={selectedPost} setIsOpen={setIsOpen}/>: ""}
         <Paper className={classes.root}>
           <TableContainer className={classes.container}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
+                  User Activity
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                {rows.map((row) => {
                   return (
+                    <Button onClick={() => handleNotification(row[1])}>
                     <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                      {columns.map((column) => {
-                        const value = row[column.id];
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === 'number' ? column.format(value) : value}
-                          </TableCell>
-                        );
-                      })}
+                      {row[3] + " " + row[0] + " your post"}
                     </TableRow>
+                    </Button>
                   );
                 })}
               </TableBody>
             </Table>
           </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10, 25, 100]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
         </Paper>
+        </div>
       );
 }
 

@@ -1,5 +1,5 @@
 import { makeStyles } from "@material-ui/core";
-import React from "react";
+import {React, useEffect, useState } from "react";
 import {useParams} from "react-router-dom";
 import Avatar from "../Avatar/Avatar";
 import UserActivity from "../UserActivity/UserActivity";
@@ -13,10 +13,35 @@ const useStyles = makeStyles({
 function User() {
     const {userId} = useParams();
     const classes = useStyles();
+    const [user, setUser] = useState();
+
+    const getUser = () => {
+        fetch("/users/"+userId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("tokenKey"),
+            },
+        })
+        .then(res => res.json())
+        .then(
+        (result) => {
+          console.log(result);
+          setUser(result);
+        },
+        (error) => {
+          console.log(error)
+        }
+      )
+    }
+
+    useEffect(() => {
+        getUser()
+    }, [])
 
     return(
         <div className={classes.root}>
-            <Avatar avatarId={0}/>
+            {user? <Avatar avatarId={user.avatarId}/> : ""}
             <UserActivity userId={userId}/>
         </div>
     )

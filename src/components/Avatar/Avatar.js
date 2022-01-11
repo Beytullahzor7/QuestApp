@@ -32,6 +32,21 @@ function Avatar(props) {
     const [open, setOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState(avatarId);
 
+    const saveAvatar = () => {
+        fetch("/users/"+localStorage.getItem("currentUser"),{
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": localStorage.getItem("tokenKey"),
+            },
+            body: JSON.stringify({
+                avatar: selectedValue,
+            }),
+        })
+        .then((res) => res.json())
+        .catch((err) => console.log(err))
+    }
+
     const handleChange = (event) => {
         setSelectedValue(event.target.value);
     };
@@ -42,6 +57,7 @@ function Avatar(props) {
 
     const handleClose = () => {
         setOpen(false);
+        saveAvatar();
     };
 
     return (
