@@ -23,6 +23,7 @@ function Home() {
     const classes = useStyles();
 
     const refreshPosts = () => {
+        
         fetch("/posts")
         .then(res => res.json()) //gelen responsu parse et
         .then(

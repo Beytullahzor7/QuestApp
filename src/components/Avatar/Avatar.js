@@ -11,6 +11,7 @@ import { Radio } from "@material-ui/core";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import { PutWithAuth, PutWithAuthtWithAuth } from "../../services/HttpsService";
 
 
 const useStyles = makeStyles({
@@ -33,16 +34,9 @@ function Avatar(props) {
     const [selectedValue, setSelectedValue] = useState(avatarId);
 
     const saveAvatar = () => {
-        fetch("/users/"+localStorage.getItem("currentUser"),{
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": localStorage.getItem("tokenKey"),
-            },
-            body: JSON.stringify({
-                avatar: selectedValue,
-            }),
-        })
+        PutWithAuth("/users/"+localStorage.getItem("currentUser"), {
+            avatar: selectedValue,
+        } )
         .then((res) => res.json())
         .catch((err) => console.log(err))
     }

@@ -21,6 +21,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 import Post from "../Post/Post";
+import { GetWithAuth } from "../../services/HttpsService";
 
 
 const columns = [
@@ -60,13 +61,7 @@ const columns = [
     const [post, setPost] = useState();
 
     const getPost = () => {
-      fetch("/posts/"+postId, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": localStorage.getItem("tokenKey"),
-        },
-      })
+      GetWithAuth("/posts/"+postId)
       .then(res => res.json())
       .then(
         (result) => {
@@ -125,13 +120,7 @@ function UserActivity(props) {
     };
 
     const getActivity = () => {
-        fetch("/users/activity/"+1, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization" : localStorage.getItem("tokenKey"),
-            },
-        })
+        GetWithAuth("/users/activity/"+1)
         .then(res => res.json())
         .then(
             (result) => {
