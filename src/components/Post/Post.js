@@ -17,6 +17,8 @@ import { Link } from "react-router-dom";
 import { Container } from "@material-ui/core";
 import Comment from "../Comment/Comment";
 import CommentForm from "../Comment/CommentForm";
+import { PostWithAuth } from "../../services/HttpsService";
+import { DeleteWithAuth } from "../../services/HttpsService";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -93,28 +95,16 @@ function Post(props) {
     }
 
     const saveLike = () => {
-        fetch("/likes", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization" : localStorage.getItem("tokenKey"),
-            },
-            body: JSON.stringify({
-                postId: postId,
-                userId: localStorage.getItem("currentUser"),
-            }),
+        PostWithAuth("/likes",{
+            postId: postId,
+            userId: localStorage.getItem("currentUser"),
         })
           .then((res) => res.json())
           .catch((err) => console.log(err))
     }
     
     const deleteLike = () => {
-        fetch("/likes/"+likeId, {
-            method: "DELETE",
-            headers: {
-                "Authorization" : localStorage.getItem("tokenKey"),
-            },
-        })
+        DeleteWithAuth("/likes/"+likeId)
           .catch((err) => console.log(err))
     }
 
@@ -131,7 +121,7 @@ function Post(props) {
             isInitialMount.current = false;
         else
             refreshComments();
-    }, [commentList])
+    }, [])
 
     useEffect(() => {checkLikes()}, [])
 
