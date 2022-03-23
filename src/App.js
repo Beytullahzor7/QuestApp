@@ -13,9 +13,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={Home}></Route>
           <Route exact path="/users/:userId" component={User}></Route>
-          <Route exact path="/auth">
-          {localStorage.getItem("currentUser") != null ? <Redirect to="/"/>: <Auth/>} 
-          </Route>
+          <Route exact path="/auth"> {localStorage.getItem("currentUser") != null ? <Redirect to="/" />: <Auth/>} </Route>
         </Switch>
       </BrowserRouter>
     </div>
