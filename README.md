@@ -12,3 +12,7 @@
 ***Post Detail Page***
 <br></br>
 ![image](https://user-images.githubusercontent.com/62347094/145454581-c24e889a-6664-4bee-813d-10fb200bda6a.png)
+
+***Changing your avatar on your profile page***
+<br></br>
+![changeavatar](https://user-images.githubusercontent.com/62347094/159124067-bb2996cd-9da0-452a-9507-d61849656db7.PNG)
